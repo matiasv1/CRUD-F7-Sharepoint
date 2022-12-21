@@ -1,0 +1,40 @@
+<template>
+    <div class="page">
+      <div class="navbar">
+        <div class="navbar-bg"></div>
+        <div class="navbar-inner sliding">
+          <div class="left">
+            <a href="#" class="back link">
+              <i class="icon icon-back"></i>
+              <span class="if-not-md">Back</span>
+            </a>
+          </div>
+          
+        </div>
+      </div>
+      <div class="page-content">
+        <ul>
+            <!-- use tag names as variables -->
+            <${ListItem} title="Item 1" />
+            <${ListItem} title="Item 2" />
+            <${ListItem} title="Item 3" />
+            <${Button} title="Item 3" />
+          </ul>
+      </div>
+    </div>
+</template>
+<script>
+    // create local component
+    const ListItem = (props, { $h }) => {
+      return () => $h`<li>${props.title}</li>`;
+    }
+    const Button = (props, { $h }) => {
+      return () => $h`<button type="button" >${props.title}</button>`;
+    }
+  
+    // export main component
+    export default () => {
+      return $render;
+    }
+</script>
+  

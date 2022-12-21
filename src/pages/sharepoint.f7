@@ -1,0 +1,325 @@
+<template>
+    <div class="page">
+      <div class="navbar">
+        <div class="navbar-bg"></div>
+        <div class="navbar-inner">
+          <div class="title prueba">Calling Sharepoint</div>
+        </div>
+      </div>
+      <div class="page-content">
+
+        <div class="data-table data-table-init card">
+            <!-- Card header -->
+            <div class="card-header">
+              <!-- Default table header -->
+              <div class="data-table-header">
+                <!-- Default table title -->
+                <div class="data-table-title">Libros</div>
+                <!-- Default table actions -->
+                <div class="data-table-actions">
+                  <a href="#" data-popup=".my-popup" class="button button-raised button-fill popup-open" @click="${newBook}">Nuevo libro</a>
+                  
+                </div>
+              </div>
+              <!-- Selected table header -->
+              <div class="data-table-header-selected">
+                <!-- Selected table title -->
+                <div class="data-table-title-selected"><span class="data-table-selected-count"></span> items selected</div>
+                <!-- Selected table actions -->
+                <div class="data-table-actions">
+                  <a class="link icon-only"  @click="${onDelete}">
+                    <i class="icon f7-icons if-not-md">trash</i>
+                    <i class="icon material-icons md-only">delete</i>
+                  </a>
+                  <a class="link icon-only">
+                    <i class="icon f7-icons if-not-md">ellipsis_vertical_circle</i>
+                    <i class="icon material-icons md-only">more_vert</i>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="card-content">
+              <table>
+                <thead>
+                  <tr>
+                    
+                    <th class="label-cell">Titulos</th>
+                    <th class="numeric-cell" style="text-align: left;">Autores</th>
+                    <th class="numeric-cell" style="text-align: left;">Acciones</th>
+                    
+                  </tr>
+                </thead>
+                <tbody>
+
+                    ${items.map((item)=> $h`
+                    <tr>
+                        
+                        
+                        <td class="label-cell">${item.title}</td>
+                        <td class="label-cell">${item.autor}</td>
+                        <td>
+                            <div class="row">
+                                <div class="col-50">
+                                    <a href="#" data-popup=".my-popup" class="button button-raised button-fill popup-open" id="hola" @click="${() => onUpdate(item.ID)}">Editar libro</a>
+                                </div>
+                                <div class="col-50">
+                                    <a href="#" class="button button-raised button-fill color-theme-red"  @click="${() => onDelete(item.ID)}">Eliminar libro</a>
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        
+                    </tr>
+                    `)}
+        
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+      </div>
+    
+
+      <div class="popup my-popup">
+        <div class="view">
+          <div class="page">
+            <div class="navbar">
+              <div class="navbar-bg"></div>
+              <div class="navbar-inner">
+                <div class="title">Popup</div>
+                <div class="right">
+                  <!-- Link to close popup -->
+                  <a class="link popup-close" @click="${onUpdate2}">Guardar</a>
+                  <a class="link popup-close">Cancelar</a>
+                </div>
+              </div>
+            </div>
+            <div class="page-content">
+                <form class="list" id="my-form">
+                    <ul>
+                      <li>
+                        <div class="item-content item-input">
+                          <div class="item-inner">
+                            <div class="item-title item-label">Nombre</div>
+                            <div class="item-input-wrap">
+                              <input type="text" name="name" placeholder="${name}" value="${name}" @input="${changeInput}"/>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      
+                      <li>
+                        <div class="item-content item-input">
+                          <div class="item-inner">
+                            <div class="item-title item-label">Autor</div>
+                            <div class="item-input-wrap">
+                              <input type="text" name="autor" placeholder="${autor}" value="${autor}" @input="${changeInput}"/>
+                            </div>
+                          </div>
+                        </div>
+                      </li> 
+                      
+            
+                    </ul>
+                  </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      
+      
+    </div>
+    
+      
+  </template>
+
+
+<script>
+    
+    export default (props, { $,$f7, $el, $theme, $on, $update }) => {
+        var items =[]
+        var name =''
+        var index = 0
+        var autor = ''
+        let selects = []
+        var accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyIsImtpZCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTBmZjEtY2UwMC0wMDAwMDAwMDAwMDAvZ3J1cG9lbnZpc2lvbi5zaGFyZXBvaW50LmNvbUBkMDlmOTM4Yy0wNzZhLTRiNDEtYjYwYS00NTVlZmUxYjA1ODgiLCJpc3MiOiIwMDAwMDAwMS0wMDAwLTAwMDAtYzAwMC0wMDAwMDAwMDAwMDBAZDA5ZjkzOGMtMDc2YS00YjQxLWI2MGEtNDU1ZWZlMWIwNTg4IiwiaWF0IjoxNjcxNjQ0MzEzLCJuYmYiOjE2NzE2NDQzMTMsImV4cCI6MTY3MTczMTAxMywiaWRlbnRpdHlwcm92aWRlciI6IjAwMDAwMDAxLTAwMDAtMDAwMC1jMDAwLTAwMDAwMDAwMDAwMEBkMDlmOTM4Yy0wNzZhLTRiNDEtYjYwYS00NTVlZmUxYjA1ODgiLCJuYW1laWQiOiI2NWI0YjRkYS1hZDQ3LTQ3OTAtYWQ3OC01YWE4MjZkOWZjNGZAZDA5ZjkzOGMtMDc2YS00YjQxLWI2MGEtNDU1ZWZlMWIwNTg4Iiwib2lkIjoiZGFlN2JjODItYTMxYS00OTM1LWJjNjEtYzJiZDg5ZjdhMjcxIiwic3ViIjoiZGFlN2JjODItYTMxYS00OTM1LWJjNjEtYzJiZDg5ZjdhMjcxIiwidHJ1c3RlZGZvcmRlbGVnYXRpb24iOiJmYWxzZSJ9.TK45qCjFQPEUavMZL0lwBHXd6AYdlAApOTYr4sXQVBwfwkTHmLSjQdu1Vs7dMilRvP6UbQ535jmOCqXBldjGhpEBwHwhZYWyBCSOmEmmZPVwG95RekRmuZXqCVl3S7I9pSLLdHs6uA8KP8ou0l-U52U5On5dv47Rgrou3GpD7DUaxlJNMJ6vWeozd_iEsRXKsDw5ggF-bB97WRFGYBkDDWlAlS_pDpqT-oURf_PitKY3PoSE7HaqCKsgPYtYvofySdxYA0bbeRq9BVn7yRK8VO5zctQmet25JThNQW8sPjs6hOSd5ZDPD2jCdCd8Idw7iNwGfTI4i5G0yW-MLzaWDQ";
+        
+        const readData = () =>{
+            $f7.request({
+            url : "https://grupoenvision.sharepoint.com/sites/MatiasVargasDev/_api/web/lists/getbytitle('Libros')/items",
+            contentType : "application/json;odata=verbose",
+            method: "GET",
+            headers : {
+                "accept" : "application/json;odata=verbose",
+                "Authorization": "Bearer " + accessToken,
+                }
+            }
+        
+            ).then(res=> {
+                console.log(JSON.parse(res.data))
+                JSON.parse(res.data).d.results.forEach(element => {
+                    items.push({
+                        ID: element.ID,
+                        title: element.Title,
+                        autor: element.Autor 
+                    })
+                });
+                console.log(items)
+                $update()
+            })
+        }
+        
+       readData()
+        
+        const updateCheckbox= (e) => {
+            let value = parseInt(e.target.value)
+
+            
+
+            if (!selects.includes(value)){
+                selects.push(value)
+            }
+            
+            else{
+                const index = selects.indexOf(value)
+                selects.splice(index,1)
+            }
+            console.log(selects)
+            $update();
+        }
+
+        const onUpdate = (id) =>{
+            
+            items.forEach(element =>{
+                if (element.ID ===id){
+                    name = element.title
+                    autor = element.autor
+                }
+            })
+           index = id
+            $update()
+        }
+
+        
+        const onDelete = (id) => {
+            $f7.dialog.confirm('¿Estas seguro que deseas eliminar?', function () {
+                for(let i=0;i<items.length; i++){
+                    if (id === items[i].ID){
+                        items.splice(i,1)
+                    }
+                }
+                $f7.request({
+                    url : `https://grupoenvision.sharepoint.com/sites/MatiasVargasDev/_api/web/lists/getbytitle('Libros')/items(${id})`,
+                    contentType : "application/json;odata=verbose",
+                    method: "POST",
+                    headers : {
+                        "accept" : "application/json;odata=verbose",
+                        "Authorization": "Bearer " + accessToken,
+                        "If-Match": "*",
+                        "X-HTTP-Method": "DELETE"
+                        }
+                    }
+                
+                    ).then(res=> {
+                        console.log(res)
+                })
+                $update()
+            });
+        }
+        
+
+        const changeInput = (e) =>{
+            const value = e.target.value
+            const item = e.target.name
+            console.log(value)
+            items.forEach(element =>{
+                if (element.ID == index){
+                    if (item === 'name'){
+                    element.title = value
+                    }
+                    else{
+                        element.autor = value
+                    }
+                }
+                
+            } )
+            
+            if (item == 'name'){
+              name = value
+            }
+            else{
+              autor = value
+            }
+            $update()
+        }
+
+        const newBook = () =>{
+          name =''
+          index = 0
+          autor = ''
+          $update()
+        }
+        const onUpdate2 = () =>{
+          
+           
+            var datos = JSON.stringify({
+                        "__metadata": {
+                            "type": "SP.Data.LibrosListItem"
+                        },
+                        "Title": name,
+                        "Autor": autor
+            })
+
+            console.log(datos)
+
+            if (index != 0){
+              $f7.request({
+                    url : `https://grupoenvision.sharepoint.com/sites/MatiasVargasDev/_api/web/lists/getbytitle('Libros')/items(${index})`,
+                    data: datos,
+                    contentType : "application/json;odata=verbose",
+                    method: "POST",
+                    headers : {
+                        
+                        "Accept" : "application/json;odata=verbose",
+                        "Authorization": "Bearer " + accessToken,
+                        "If-Match": "*",
+                        "X-HTTP-Method": "MERGE",
+                        "X-RequestDigest": $("#__REQUESTDIGEST").val(),
+                        
+                        }
+                    }
+                
+                    ).then(res=> {
+                        console.log(res)
+                })
+                $update()
+            }
+            else{
+              $f7.request({
+                    url : `https://grupoenvision.sharepoint.com/sites/MatiasVargasDev/_api/web/lists/getbytitle('Libros')/items`,
+                    data: datos,
+                    contentType : "application/json;odata=verbose",
+                    method: "POST",
+                    headers : {
+                        
+                        "Accept" : "application/json;odata=verbose",
+                        "Authorization": "Bearer " + accessToken,
+                        "X-RequestDigest": $("#__REQUESTDIGEST").val(),
+                        
+                        }
+                    }
+                
+                    ).then(res=> {
+                        items = []
+                        readData()
+                })
+            }
+            
+        }
+  
+      return $render;
+    }
+  </script>

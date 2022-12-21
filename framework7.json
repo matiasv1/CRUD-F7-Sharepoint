@@ -1,0 +1,19 @@
+{
+  "cwd": "C:\\Users\\Lenovo\\Desktop\\appPrueba",
+  "type": [
+    "web"
+  ],
+  "name": "My App",
+  "framework": "core",
+  "template": "split-view",
+  "bundler": "vite",
+  "cssPreProcessor": false,
+  "theming": {
+    "customColor": false,
+    "color": "#007aff",
+    "darkTheme": false,
+    "iconFonts": true,
+    "fillBars": false
+  },
+  "customBuild": false
+}
